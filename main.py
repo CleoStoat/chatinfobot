@@ -49,7 +49,7 @@ def get_commands() -> List[CommandData]:
     commands = [
         CommandData(
             callback=infogroup_cmd,
-            name="mensajes", 
+            name="mensajes_info", 
             description="Muestra la cantidad de mensajes que se enviaron en este chat",
         ),
     ]
