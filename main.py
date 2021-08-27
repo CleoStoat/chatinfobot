@@ -1,30 +1,19 @@
-from dataclasses import dataclass
 import datetime
 import logging
 from functools import partial
-from typing import Any, Callable, List, Dict, Tuple, Union
-from telegram.botcommand import BotCommand
-from telegram.botcommandscope import BotCommandScope
 
-from telegram.ext import Updater
-from telegram.ext import dispatcher
-from telegram.ext.commandhandler import CommandHandler
+from telegram.ext import Updater, dispatcher
+from telegram.ext.dispatcher import Dispatcher
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
-from telegram.ext.dispatcher import Dispatcher
 
 import config
 from adapters.orm import create_tables, start_mappers
-from service_layer.commands_handlers.info import info_cmd
-from service_layer.commands_handlers.infogroup import infogroup_cmd
+from bot_commands import COMMANDS
+from helpers import set_bot_commands
 from service_layer.message_handlers.msg_handler import msg_handler
-from service_layer.unit_of_work import AbstractUnitOfWork, SqlAlchemyUnitOfWork
+from service_layer.unit_of_work import SqlAlchemyUnitOfWork
 
-@dataclass
-class CommandData:
-    callback: Callable
-    name: str
-    description: str
 
 def main():
     logging.basicConfig(
@@ -41,49 +30,11 @@ def main():
     # Instantiate SqlAlchemy Unit of Work
     uow = SqlAlchemyUnitOfWork()
 
-    set_bot_commands(updater, uow)
+    set_bot_commands(COMMANDS, updater, uow)
     dispatcher.add_handler(MessageHandler(Filters.all, partial(msg_handler, uow=uow)))
 
     updater.start_polling()
     updater.idle()
-
-def get_commands() -> List[CommandData]:
-    commands = [
-        CommandData(
-            callback=infogroup_cmd,
-            name="mensajes_info", 
-            description="Muestra la cantidad de mensajes que se enviaron en este chat",
-        ),
-    ]
-
-    return commands
-
-def set_bot_commands(updater: Updater, uow: AbstractUnitOfWork) -> None:
-    command_handlers: List[CommandHandler] = []
-    bot_commands: List[Union[BotCommand, Tuple[str, str]]] = []
-
-    for cmd in get_commands():
-        command_handlers.append(
-            CommandHandler(
-                command=cmd.name, 
-                callback=partial(cmd.callback, uow=uow),
-            )
-        )
-
-        bot_commands.append(
-            BotCommand(
-                command=cmd.name, 
-                description=cmd.description,
-            )
-        )
-
-    dispatcher = updater.dispatcher
-    for handler in command_handlers:
-        dispatcher.add_handler(handler)
-
-    # scope = BotCommandScope(type=BotCommandScope.ALL_CHAT_ADMINISTRATORS) 
-    updater.bot.setMyCommands(commands=bot_commands)
-
 
 
 if __name__ == "__main__":
