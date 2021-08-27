@@ -1,7 +1,8 @@
+from dataclasses import dataclass
 import datetime
 import logging
 from functools import partial
-from typing import Any, Callable, List, Dict, Tuple, TypedDict, Union
+from typing import Any, Callable, List, Dict, Tuple, Union
 from telegram.botcommand import BotCommand
 from telegram.botcommandscope import BotCommandScope
 
@@ -19,7 +20,8 @@ from service_layer.commands_handlers.infogroup import infogroup_cmd
 from service_layer.message_handlers.msg_handler import msg_handler
 from service_layer.unit_of_work import AbstractUnitOfWork, SqlAlchemyUnitOfWork
 
-class CommandData(TypedDict):
+@dataclass
+class CommandData:
     callback: Callable
     name: str
     description: str
@@ -63,15 +65,15 @@ def set_bot_commands(updater: Updater, uow: AbstractUnitOfWork) -> None:
     for cmd in get_commands():
         command_handlers.append(
             CommandHandler(
-                command=cmd["name"], 
-                callback=partial(cmd["callback"], uow=uow),
+                command=cmd.name, 
+                callback=partial(cmd.callback, uow=uow),
             )
         )
 
         bot_commands.append(
             BotCommand(
-                command=cmd["name"], 
-                description=cmd["description"],
+                command=cmd.name, 
+                description=cmd.description,
             )
         )
 
