@@ -9,7 +9,7 @@ COMMANDS = [
         description="Muestra la cantidad de mensajes que se enviaron en este chat",
     ),
     CommandData(
-        callback=plot_cmd(),
+        callback=plot_cmd,
         name="plot",
         description="Plotear",
     ),
