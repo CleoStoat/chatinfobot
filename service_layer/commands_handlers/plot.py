@@ -1,20 +1,15 @@
 import datetime
 from typing import List
 
-import matplotlib.pyplot as plt
-import numpy as np
-from PIL import Image
 from service_layer.unit_of_work import AbstractUnitOfWork
 from telegram import Update
 from telegram.ext.callbackcontext import CallbackContext
 
 from helpers.graph_helpers import fig2bytes
+from service_layer.plotting import plot_hor_bars
+
 
 def plot_cmd(update: Update, context: CallbackContext, uow: AbstractUnitOfWork) -> None:
-    plt.rcdefaults()
-    fig, ax = plt.subplots()
-    fig.set_size_inches(10, 10)
-
     nombres_usuarios: List[int] = []
     cant_mensajes: List[int] = []
 
@@ -35,19 +30,11 @@ def plot_cmd(update: Update, context: CallbackContext, uow: AbstractUnitOfWork) 
     nombres_usuarios = nombres_usuarios[:amm]
     cant_mensajes = cant_mensajes[:amm]
 
-    y_pos = np.arange(len(nombres_usuarios))
+    fig = plot_hor_bars(
+        labels=nombres_usuarios,
+        widths=cant_mensajes,
+        x_label="Mensajes",
+        title=f"Cantidad de mensajes de hoy ({datetime.date.today()})",
+    )
 
-    ax.barh(y_pos, cant_mensajes, align="center")
-    ax.set_yticks(y_pos)
-    ax.set_yticklabels(nombres_usuarios)
-    ax.invert_yaxis()  # labels read top-to-bottom
-    ax.set_xlabel("Mensajes")
-    ax.set_title(f"Cantidad de mensajes de hoy ({datetime.date.today()})")
-
-    # plt.show()
-
-    buf = fig2bytes(fig)
-
-    # img.show()
-
-    update.effective_message.reply_photo(buf)
+    update.effective_message.reply_photo(fig2bytes(fig))
