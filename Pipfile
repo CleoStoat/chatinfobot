@@ -8,6 +8,7 @@ python-telegram-bot = "*"
 python-dotenv = "*"
 sqlalchemy = "*"
 matplotlib = "*"
+pillow = "*"
 
 [dev-packages]
 black = "*"
