@@ -10,7 +10,7 @@ from telegram.ext.messagehandler import MessageHandler
 import config
 from adapters.orm import create_tables, start_mappers
 from bot_commands import COMMANDS
-from helpers import set_bot_commands
+from helpers.command_helpers import set_bot_commands
 from service_layer.message_handlers.msg_handler import msg_handler
 from service_layer.unit_of_work import SqlAlchemyUnitOfWork
 

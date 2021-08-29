@@ -1,4 +1,4 @@
-from helpers import CommandData
+from helpers.command_helpers import CommandData
 from service_layer.commands_handlers.infogroup import infogroup_cmd
 from service_layer.commands_handlers.plot import plot_cmd
 

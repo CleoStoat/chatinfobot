@@ -8,6 +8,7 @@ from service_layer.unit_of_work import AbstractUnitOfWork
 from telegram import Update
 from telegram.ext.callbackcontext import CallbackContext
 
+from helpers.graph_helpers import fig2bytes
 
 def plot_cmd(update: Update, context: CallbackContext, uow: AbstractUnitOfWork) -> None:
     plt.rcdefaults()
@@ -50,24 +51,3 @@ def plot_cmd(update: Update, context: CallbackContext, uow: AbstractUnitOfWork) 
     # img.show()
 
     update.effective_message.reply_photo(buf)
-
-
-# def fig2img(fig):
-#     """Convert a Matplotlib figure to a PIL Image and return it"""
-#     import io
-
-#     buf = io.BytesIO()
-#     fig.savefig(buf)
-#     buf.seek(0)
-#     img = Image.open(buf)
-#     return img
-
-
-def fig2bytes(fig):
-    """Convert a Matplotlib figure to a PIL Image and return it"""
-    import io
-
-    buf = io.BytesIO()
-    fig.savefig(buf)
-    buf.seek(0)
-    return buf
