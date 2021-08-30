@@ -21,6 +21,10 @@ class AbstractRepository(ABC):
     def get_list_of_users_msg_count(self) -> List[Tuple[int, int]]:
         raise NotImplementedError
 
+    @abstractmethod
+    def get_all_messages(self) -> List[ChatMessage]:
+        raise NotImplementedError
+
 
 class SqlAlchemyRepository(AbstractRepository):
     session: Session
@@ -44,3 +48,7 @@ class SqlAlchemyRepository(AbstractRepository):
             .group_by(ChatMessage.user_id)
             .all()
         )
+
+    def get_all_messages(self) -> List[ChatMessage]:
+        return self.session.query(ChatMessage).all()
+
