@@ -2,3 +2,5 @@ __pycache__
 .vscode
 .env
 *.db
+.pdm.toml
+__pypackages__/
