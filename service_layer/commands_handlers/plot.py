@@ -19,8 +19,10 @@ def plot_cmd(update: Update, context: CallbackContext, uow: AbstractUnitOfWork) 
     user_ids: List[int] = []
     cant_mensajes: List[int] = []
 
+    chat_id = update.effective_chat.id
+
     with uow:
-        user_messages = uow.repo.get_all_messages()
+        user_messages = uow.repo.get_all_messages_in_chat(chat_id=chat_id)
         
         user_ids = list({x.user_id for x in user_messages})
 
@@ -87,8 +89,8 @@ def plot_active_hours_cmd(update: Update, context: CallbackContext, uow: Abstrac
 
     chat = update.effective_chat
 
-    hours = hours_msg_count.keys()
-    cant_mensajes = hours_msg_count.values()
+    hours = list(hours_msg_count.keys())
+    cant_mensajes = list(hours_msg_count.values())
 
     fig = plot_hor_bars(
         labels=hours,
@@ -123,8 +125,8 @@ def plot_active_weekdays_cmd(update: Update, context: CallbackContext, uow: Abst
         
         uow.commit()
 
-    weekdays = weekday_msg_count.keys()
-    cant_mensajes = weekday_msg_count.values()
+    weekdays = list(weekday_msg_count.keys())
+    cant_mensajes = list(weekday_msg_count.values())
 
     fig = plot_hor_bars(
         labels=weekdays,
@@ -152,10 +154,8 @@ def plot_month_cmd(update: Update, context: CallbackContext, uow: AbstractUnitOf
         
         uow.commit()
 
-    chat = update.effective_chat
-
-    days = day_msg_count.keys()
-    cant_mensajes = day_msg_count.values()
+    days = list(day_msg_count.keys())
+    cant_mensajes = list(day_msg_count.values())
 
     fig = plot_line(
         x_labels=days,

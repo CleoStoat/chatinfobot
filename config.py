@@ -1,4 +1,5 @@
 import os
+from typing import List
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,3 +22,7 @@ def get_bot_token() -> str:
 
 def get_bot_owner_user_id() -> int:
     return int(os.getenv("BOT_OWNER_USER_ID", "0"))
+
+def get_staff_ids() -> List[int]:
+    staff = [int(x) for x in os.getenv("STAFF", "0").split(",")]
+    return staff

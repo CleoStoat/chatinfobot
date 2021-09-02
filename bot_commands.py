@@ -1,6 +1,7 @@
 from helpers.command_helpers import CommandData
 from service_layer.commands_handlers.infogroup import infogroup_cmd
 from service_layer.commands_handlers.plot import plot_cmd, plot_active_hours_cmd, plot_active_weekdays_cmd, plot_month_cmd
+from service_layer.commands_handlers.broadcast import broadcast_cmd
 
 COMMANDS = [
     CommandData(
@@ -27,5 +28,10 @@ COMMANDS = [
         callback=plot_month_cmd,
         name="plot_m",
         description="Plotear ultimos 31 dias",
+    ),
+    CommandData(
+        callback=broadcast_cmd,
+        name="broadcast",
+        description="Enviar mensaje a todos los grupos",
     ),
 ]

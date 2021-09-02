@@ -25,6 +25,10 @@ class AbstractRepository(ABC):
     def get_all_messages(self) -> List[ChatMessage]:
         raise NotImplementedError
 
+    @abstractmethod
+    def get_all_messages_in_chat(self, chat_id: int) -> List[ChatMessage]:
+        raise NotImplementedError
+
 
 class SqlAlchemyRepository(AbstractRepository):
     session: Session
@@ -51,4 +55,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def get_all_messages(self) -> List[ChatMessage]:
         return self.session.query(ChatMessage).all()
+
+    def get_all_messages_in_chat(self, chat_id: int) -> List[ChatMessage]:
+        return self.session.query(ChatMessage).filter_by(chat_id=chat_id).all()
 
