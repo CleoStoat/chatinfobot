@@ -28,12 +28,14 @@ def broadcast_cmd(
         all_chat_ids: List[int] = list(set([x.chat_id for x in all_chatmessages]))
 
         for chat_id in all_chat_ids:
-            context.bot.copy_message(
-                chat_id=chat_id, 
-                from_chat_id=update.effective_chat.id,
-                message_id=update.effective_message.reply_to_message.message_id,
-            )
-
+            try:
+                context.bot.copy_message(                
+                    chat_id=chat_id, 
+                    from_chat_id=update.effective_chat.id,
+                    message_id=update.effective_message.reply_to_message.message_id,
+                )
+            except Exception:
+                pass
         uow.commit()
 
     
