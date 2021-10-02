@@ -26,7 +26,12 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_all_messages_in_chat(self, chat_id: int) -> List[ChatMessage]:
+    def get_all_messages_in_chat(
+        self,
+        chat_id: int,
+        initial_datetime: datetime = None,
+        end_datetime: datetime = None,
+    ) -> List[ChatMessage]:
         raise NotImplementedError
 
 
@@ -41,10 +46,12 @@ class SqlAlchemyRepository(AbstractRepository):
         self.session.add(chat_msg)
 
     def get_messages(self, chat_id: int) -> List[ChatMessage]:
-        return self.session.query(ChatMessage).filter_by(chat_id=chat_id).all()
+        result = self.session.query(ChatMessage).filter_by(chat_id=chat_id).all()
+        self.session.expunge_all()
+        return result
 
     def get_list_of_users_msg_count(self) -> List[Tuple[int, int]]:
-        return (
+        result = (
             self.session.query(
                 ChatMessage.user_id,
                 func.count(ChatMessage.time),
@@ -52,10 +59,33 @@ class SqlAlchemyRepository(AbstractRepository):
             .group_by(ChatMessage.user_id)
             .all()
         )
+        self.session.expunge_all()
+        return
 
     def get_all_messages(self) -> List[ChatMessage]:
-        return self.session.query(ChatMessage).all()
+        chat_messages = self.session.query(ChatMessage).all()
+        self.session.expunge_all()
+        return chat_messages
 
-    def get_all_messages_in_chat(self, chat_id: int) -> List[ChatMessage]:
-        return self.session.query(ChatMessage).filter_by(chat_id=chat_id).all()
+    def get_all_messages_in_chat(
+        self,
+        chat_id: int,
+        initial_datetime: datetime = None,
+        end_datetime: datetime = None,
+    ) -> List[ChatMessage]:
+        if initial_datetime is None:
+            initial_datetime = datetime.min
+        if end_datetime is None:
+            end_datetime = datetime.max
 
+        chat_messages = (
+            self.session.query(ChatMessage)
+            .filter_by(chat_id=chat_id)
+            .filter(
+                ChatMessage.time >= initial_datetime,
+                ChatMessage.time <= end_datetime,
+            )
+            .all()
+        )
+        self.session.expunge_all()
+        return chat_messages
