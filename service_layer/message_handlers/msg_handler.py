@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import json 
 
 from telegram import Update
@@ -19,10 +19,12 @@ def msg_handler(
 
     user_id: int = update.effective_user.id
     chat_id: int = update.effective_chat.id
-    time: datetime = datetime.now()
+    time: datetime = utc_to_local(update.effective_message.date)
 
     with uow:
         uow.repo.add_message(user_id, chat_id, time)
         uow.commit()
     
     
+def utc_to_local(utc_dt) -> datetime:
+    return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
