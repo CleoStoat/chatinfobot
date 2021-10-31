@@ -182,12 +182,22 @@ def get_start_and_end_week(input_date: datetime) -> Tuple[datetime, datetime]:
     start = input_date - timedelta(days=input_date.weekday())
     start = start.replace(hour=0, minute=0, second=0, microsecond=0)
     end = start + timedelta(days=6)
+    end += timedelta(1) # End of Sunday
     return start, end
+
+def last_day_of_month(any_day):
+    # this will never fail
+    # get close to the end of the month for any day, and add 4 days 'over'
+    next_month = any_day.replace(day=28) + timedelta(days=4)
+    # subtract the number of remaining 'overage' days to get last day of current month, or said programattically said, the previous day of the first of next month
+    return next_month - timedelta(days=next_month.day)
 
 def get_start_and_end_month(input_date: datetime) -> Tuple[datetime, datetime]:
     start = input_date - timedelta(days=input_date.day)
     start = start.replace(hour=0, minute=0, second=0, microsecond=0)
-    end = start + timedelta(days=6)
+    # end = start + timedelta(days=6)
+    end = last_day_of_month(start)
+    end += timedelta(1) # End of last day of month
     return start, end
 
 def get_start_and_end_alltime(input_date: datetime) -> Tuple[datetime, datetime]:
