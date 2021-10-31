@@ -193,7 +193,7 @@ def last_day_of_month(any_day):
     return next_month - timedelta(days=next_month.day)
 
 def get_start_and_end_month(input_date: datetime) -> Tuple[datetime, datetime]:
-    start = input_date - timedelta(days=input_date.day)
+    start = input_date - timedelta(days=input_date.day) + timedelta(days=1)
     start = start.replace(hour=0, minute=0, second=0, microsecond=0)
     # end = start + timedelta(days=6)
     end = last_day_of_month(start)
